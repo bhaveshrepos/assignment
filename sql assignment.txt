@@ -1,0 +1,43 @@
+Task
+--------
+Write a query to pull back the most recent redemption count, by redemption date, for the date
+range 2023-10-30 to 2023-11-05, for retailer "ABC Store". Your result should have 2 columns
+and 7 rows (one row per day in the date range). Provide the query and then using your query
+result, provide answers to the following questions.
+
+--select redemptionDate,max(redemptionCount) as most_recent_redemptionCount from TblRedemptions_ByDay t inner join TblRetailers tr on t.retailerId=tr.id where t.redemptionDate>="2023-10-30" and redemptionDate<="2023-11-05" and tr.retailerName="ABC Store" group by t.redemptionDate order by t.redemptionDate
+
+Questions
+---------
+Using the data set you produced from your query, answer the following questions:
+
+1. Which date had the least number of redemptions and what was the redemption count?
+
+redemptionDate	| min_redemptionCount
+2023-11-05	|  3702
+
+-->with cte as (select redemptionDate,max(redemptionCount) as most_recent_redemptionCount,t.createDateTime from TblRedemptions_ByDay t inner join TblRetailers tr on t.retailerId=tr.id where t.redemptionDate>="2023-10-30" and redemptionDate<="2023-11-05" and tr.retailerName="ABC Store" group by t.redemptionDate order by t.redemptionDate) select  redemptionDate,min(most_recent_redemptionCount) as min_redemptionCount from cte
+
+2. Which date had the most number of redemptions and what was the redemption count?
+redemptionDate	| mx_redemptionCount
+2023-11-04	| 5224
+
+-->with cte as (select redemptionDate,max(redemptionCount) as most_recent_redemptionCount,t.createDateTime from TblRedemptions_ByDay t inner join TblRetailers tr on t.retailerId=tr.id where t.redemptionDate>="2023-10-30" and redemptionDate<="2023-11-05" and tr.retailerName="ABC Store" group by t.redemptionDate order by t.redemptionDate) select  redemptionDate,max(most_recent_redemptionCount) as mx_redemptionCount from cte
+
+3. What was the createDateTime for each redemptionCount in questions 1 and 2?
+
+redemptionDate	| min_redemptionCount	| createDateTime
+2023-11-05	| 3702			| 2023-11-06 11:00:00 UTC
+
+-->with cte as (select redemptionDate,max(redemptionCount) as most_recent_redemptionCount,t.createDateTime from TblRedemptions_ByDay t inner join TblRetailers tr on t.retailerId=tr.id where t.redemptionDate>="2023-10-30" and redemptionDate<="2023-11-05" and tr.retailerName="ABC Store" group by t.redemptionDate order by t.redemptionDate) select  redemptionDate,min(most_recent_redemptionCount) as min_redemptionCount,createDateTime from cte
+
+
+redemptionDate	| mx_redemptionCount	| createDateTime
+2023-11-04	| 5224			| 2023-11-05 11:00:00 UTC
+
+-->with cte as (select redemptionDate,max(redemptionCount) as most_recent_redemptionCount,t.createDateTime from TblRedemptions_ByDay t inner join TblRetailers tr on t.retailerId=tr.id where t.redemptionDate>="2023-10-30" and redemptionDate<="2023-11-05" and tr.retailerName="ABC Store" group by t.redemptionDate order by t.redemptionDate) select  redemptionDate,max(most_recent_redemptionCount) as mx_redemptionCount,createDateTime from cte
+
+4. Is there another method you can use to pull back the most recent redemption count, by
+redemption date, for the date range 2023-10-30 to 2023-11-05, for retailer "ABC Store"?
+In words, describe how you would do this (no need to write a query, unless you’d like to).
+-->SELECT redemptionDate, MAX(redemptionCount) AS recent_redemptionCount FROM tblRedemptions_ByDay WHERE retailerId = (SELECT id FROM tblRetailers WHERE retailerName = 'ABC Store') AND redemptionDate BETWEEN '2023-10-30' AND '2023-11-05' GROUP BY redemptionDate ORDER BY redemptionDate;
